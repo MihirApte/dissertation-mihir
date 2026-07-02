@@ -18,6 +18,7 @@ import utils.constants as const
 import utils.feature_utils as fu
 import utils.preprocesser_utils as pu
 import utils.image_process_utils as ipu
+import utils.semantic_shuffle_utils as ssu
 
 
 logging.set_verbosity_error()
@@ -169,10 +170,16 @@ class RAVE_MultiControlNet(nn.Module):
     
     @torch.no_grad()
     def shuffle_latents(self, latents, control_image_1, control_image_2, indices):
-        rand_i = torch.randperm(self.total_frame_number).tolist()
-        # latents, _ = fu.prepare_key_grid_latents(latents, self.grid, self.grid, rand_i)
-        # control_image, _ = fu.prepare_key_grid_latents(control_image, self.grid, self.grid, rand_i)
-        
+        # -- Choose permutation strategy -------------------------------
+        if self.shuffle_mode == 'semantic':
+            rand_i = ssu.semantic_permutation(
+                self.frame_embeddings,
+                self.grid_frame_number,
+                self.total_frame_number
+            )
+        else:
+            rand_i = torch.randperm(self.total_frame_number).tolist()
+
         latents_l, controls_l_1, controls_l_2, randx = [], [], [], []
         for j in range(self.sample_size):
             rand_indices = rand_i[j*self.grid_frame_number:(j+1)*self.grid_frame_number]
@@ -219,7 +226,7 @@ class RAVE_MultiControlNet(nn.Module):
     @torch.no_grad()
     def reverse_diffusion(self, latents=None, control_image_1=None, control_image_2=None, guidance_scale=7.5, indices=None):
         self.scheduler.set_timesteps(self.num_inference_steps, device=self.device)
-        with torch.autocast('cuda'):
+        with torch.amp.autocast('cuda'):
 
             for i, t in tqdm(enumerate(self.scheduler.timesteps), desc='reverse_diffusion'):
                 indices = list(indices)
@@ -431,15 +438,28 @@ class RAVE_MultiControlNet(nn.Module):
         self.is_shuffle = input_dict['is_shuffle']
         self.give_control_inversion = input_dict['give_control_inversion']
 
-        self.guidance_scale = input_dict['guidance_scale']
-        
+        # shuffle_mode: 'random' (original RAVE) or 'semantic' (our improvement)
+        self.shuffle_mode = input_dict.get('shuffle_mode', 'random')
 
-        
+        self.guidance_scale = input_dict['guidance_scale']
+
         indices = list(np.arange(self.total_frame_number))
         
         
         img_batch, control_batch_1, control_batch_2 = self.process_image_batch(input_dict['image_pil_list'])
         init_latents_pre = self.encode_imgs(img_batch)
+
+        # Pre-compute CLIP frame embeddings once (only needed for semantic shuffle)
+        if self.shuffle_mode == 'semantic':
+            print("[Semantic Shuffle] Computing CLIP frame embeddings (runs on CPU)...")
+            self.frame_embeddings = ssu.compute_frame_embeddings(
+                input_dict['image_pil_list'],
+                grid_size=self.grid_size,
+                device='cpu'
+            )
+            print(f"[Semantic Shuffle] Embeddings computed: {self.frame_embeddings.shape}")
+        else:
+            self.frame_embeddings = None
         
         self.scheduler = DDIMScheduler.from_config(self.scheduler_config)
         self.scheduler.set_timesteps(self.num_inference_steps, device=self.device)

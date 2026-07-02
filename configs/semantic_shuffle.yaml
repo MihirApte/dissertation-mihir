@@ -1,0 +1,39 @@
+# --------------------------------------------------------------
+# EXPERIMENT 2 - Semantic Shuffle (dissertation improvement)
+# --------------------------------------------------------------
+# Replaces random frame shuffling with CLIP similarity-based grouping.
+# Visually similar frames are placed in the same grid during denoising,
+# producing stronger cross-frame interactions and better temporal consistency.
+
+video_name: "truck"
+preprocess_name: 'depth_zoe'
+
+batch_size: 4
+batch_size_vae: 1
+
+cond_step_start: 0.0
+
+controlnet_conditioning_scale: 1.0
+controlnet_guidance_end: 1.0
+controlnet_guidance_start: 0.0
+
+give_control_inversion: true
+
+grid_size: 3
+sample_size: -1
+pad: 1
+guidance_scale: 7.5
+inversion_prompt: ''
+
+is_ddim_inversion: true
+is_shuffle: true
+shuffle_mode: 'semantic'        # our improvement: CLIP-guided grouping
+
+negative_prompts: ""
+num_inference_steps: 50
+num_inversion_step: 50
+positive_prompts: "Wooden trucks drive on a racetrack"
+save_folder: 'experiment_semantic_shuffle'
+
+seed: 0
+model_id: 'None'

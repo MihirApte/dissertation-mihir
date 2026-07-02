@@ -1,28 +1,47 @@
-accelerate
-basicsr
+# ---------------------------------------------------------------
+# PyTorch index for Blackwell GPU (RTX Pro 6000, CUDA 12.4)
+# ---------------------------------------------------------------
+--extra-index-url https://download.pytorch.org/whl/cu124
+
+# Core deep learning
+torch==2.4.0
+torchvision==0.19.0
+torchaudio==2.4.0
+xformers==0.0.27
+
+# CLIP (semantic shuffle improvement)
+git+https://github.com/openai/CLIP.git
+
+# Diffusion pipeline - pinned, do not upgrade
 diffusers==0.18.2
-einops
-gradio
-imageio
-matplotlib
+transformers
+accelerate
+safetensors
+
+# Annotators - pinned, do not upgrade
+timm==0.6.7
 mmdet==3.2.0
 mmpose==1.2.0
+
+# Utilities
 numpy
-omegaconf
 opencv_python
-openvino
-pandas
 Pillow
+scipy
+scikit-image
+einops
+omegaconf
+PyYAML
+tqdm
+ftfy
+regex
+imageio
+matplotlib
+pandas
+gradio
+basicsr
 prettytable
 pytorch_lightning
-PyYAML
-safetensors
-scipy
-setuptools
-scikit-image
-timm==0.6.7
 torch_tb_profiler
-tqdm
-transformers
-
-
+openvino
+setuptools

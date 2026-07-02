@@ -15,6 +15,7 @@ import numpy as np
 import utils.feature_utils as fu
 import utils.preprocesser_utils as pu
 import utils.image_process_utils as ipu
+import utils.semantic_shuffle_utils as ssu
 
 
 logging.set_verbosity_error()
@@ -146,8 +147,16 @@ class RAVE(nn.Module):
     
     @torch.no_grad()
     def shuffle_latents(self, latents, control_image, indices):
-        rand_i = torch.randperm(self.total_frame_number).tolist()
-        
+        # -- Choose permutation strategy -------------------------------
+        if self.shuffle_mode == 'semantic':
+            rand_i = ssu.semantic_permutation(
+                self.frame_embeddings,
+                self.grid_frame_number,
+                self.total_frame_number
+            )
+        else:
+            rand_i = torch.randperm(self.total_frame_number).tolist()
+
         latents_l, controls_l, randx = [], [], []
         for j in range(self.sample_size):
             rand_indices = rand_i[j*self.grid_frame_number:(j+1)*self.grid_frame_number]
@@ -183,7 +192,7 @@ class RAVE(nn.Module):
     @torch.no_grad()
     def reverse_diffusion(self, latents=None, control_image=None, guidance_scale=7.5, indices=None):
         self.scheduler.set_timesteps(self.num_inference_steps, device=self.device)
-        with torch.autocast('cuda'):
+        with torch.amp.autocast('cuda'):
 
             for i, t in tqdm(enumerate(self.scheduler.timesteps), desc='reverse_diffusion'):
                 indices = list(indices)
@@ -328,7 +337,7 @@ class RAVE(nn.Module):
         return frames
 
 
-    @torch.autocast(dtype=torch.float16, device_type='cuda')  
+    @torch.amp.autocast(device_type='cuda', dtype=torch.float16)
     def batched_denoise_step(self, x, t, indices):
         batch_size = self.config["batch_size"]
         denoised_latents = []
@@ -390,6 +399,7 @@ class RAVE(nn.Module):
         self.is_ddim_inversion = input_dict['is_ddim_inversion']
         self.is_shuffle = input_dict['is_shuffle']
         self.give_control_inversion = input_dict['give_control_inversion']
+        self.shuffle_mode = input_dict.get('shuffle_mode', 'random')
         
         self.guidance_scale = input_dict['guidance_scale']
         
@@ -398,7 +408,18 @@ class RAVE(nn.Module):
         
         img_batch, control_batch = self.process_image_batch(input_dict['image_pil_list'])
         init_latents_pre = self.encode_imgs(img_batch)
-        
+
+        if self.shuffle_mode == 'semantic':
+            print("[Semantic Shuffle] Computing CLIP frame embeddings (runs on CPU)...")
+            self.frame_embeddings = ssu.compute_frame_embeddings(
+                input_dict['image_pil_list'],
+                grid_size=self.grid_size,
+                device='cpu'
+            )
+            print(f"[Semantic Shuffle] Embeddings computed: {self.frame_embeddings.shape}")
+        else:
+            self.frame_embeddings = None
+
         self.scheduler = DDIMScheduler.from_config(self.scheduler_config)
         self.scheduler.set_timesteps(self.num_inference_steps, device=self.device)
         self.inv_cond_embeddings, self.inv_uncond_embeddings = self.get_text_embeds(self.inversion_prompt, "")
@@ -407,15 +428,14 @@ class RAVE(nn.Module):
             latents_inverted, indices, control_batch = self.ddim_inversion(init_latents, control_batch, indices)
             latents_inverted, control_batch = self.__postprocess_inversion_input(latents_inverted, control_batch)
         else:
-            init_latents_pre = torch.cat([init_latents_pre], dim=0) 
+            init_latents_pre = torch.cat([init_latents_pre], dim=0)
             noise = torch.randn_like(init_latents_pre)
             latents_inverted = self.scheduler.add_noise(init_latents_pre, noise, self.scheduler.timesteps[:1])
 
         self.cond_embeddings, self.uncond_embeddings = self.get_text_embeds(self.positive_prompts, self.negative_prompts)
         latents_denoised, indices, controls = self.reverse_diffusion(latents_inverted, control_batch, self.guidance_scale, indices=indices)
-    
+
         image_torch = self.decode_latents(latents_denoised)
         ordered_img_frames = self.order_grids(ipu.torch_to_pil_img_batch(image_torch), indices)
         ordered_control_frames = self.order_grids(ipu.torch_to_pil_img_batch(controls), indices)
         return ordered_img_frames, ordered_control_frames
-    
