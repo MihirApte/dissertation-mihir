@@ -14,6 +14,7 @@ git+https://github.com/openai/CLIP.git
 
 # Diffusion pipeline - pinned, do not upgrade
 diffusers==0.18.2
+huggingface_hub==0.20.3
 transformers
 accelerate
 safetensors

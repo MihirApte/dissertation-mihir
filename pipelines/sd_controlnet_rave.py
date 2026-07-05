@@ -41,7 +41,10 @@ class RAVE(nn.Module):
 
         pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(hf_path, controlnet=controlnet, torch_dtype=self.dtype).to(self.device, self.dtype) 
         pipe.enable_model_cpu_offload()
-        pipe.enable_xformers_memory_efficient_attention()
+        try:
+            pipe.enable_xformers_memory_efficient_attention()
+        except ModuleNotFoundError:
+            pass  # xformers not installed; using standard attention (fine for T4/testing)
         return pipe
         
     @torch.no_grad()
