@@ -50,7 +50,7 @@ fi
 
 # -- Step 0: GPU check -----------------------------------------
 log "Step 0 - Verifying GPU and dependencies..."
-python check_gpu.py || fail "GPU check failed. Fix the issues above before continuing."
+python3 check_gpu.py || warn "GPU check reported issues (may be a false alarm on Colab). Continuing..."
 echo ""
 
 # -- Step 1: Baseline experiment (random shuffle) --------------
@@ -59,7 +59,7 @@ log "Config : configs/baseline_random.yaml"
 echo ""
 
 START_TIME_1=$SECONDS
-python scripts/run_experiment.py configs/baseline_random.yaml
+python3 scripts/run_experiment.py configs/baseline_random.yaml
 DURATION_1=$(( SECONDS - START_TIME_1 ))
 
 echo ""
@@ -73,7 +73,7 @@ log "Note   : DDIM inversions are cached from Step 1 - this run will be faster."
 echo ""
 
 START_TIME_2=$SECONDS
-python scripts/run_experiment.py configs/semantic_shuffle.yaml
+python3 scripts/run_experiment.py configs/semantic_shuffle.yaml
 DURATION_2=$(( SECONDS - START_TIME_2 ))
 
 echo ""
@@ -84,7 +84,7 @@ echo ""
 log "Step 3 - Computing evaluation metrics (Warp Error + CLIP Score)..."
 echo ""
 
-python compute_metrics.py \
+python3 compute_metrics.py \
     --results_dir results \
     --prompt "Wooden trucks drive on a racetrack" \
     --device cpu
