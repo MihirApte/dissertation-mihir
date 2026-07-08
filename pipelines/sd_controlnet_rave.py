@@ -157,6 +157,12 @@ class RAVE(nn.Module):
                 self.grid_frame_number,
                 self.total_frame_number
             )
+        elif self.shuffle_mode == 'kmeans':
+            rand_i = ssu.kmeans_permutation(
+                self.frame_embeddings,
+                self.grid_frame_number,
+                self.total_frame_number
+            )
         else:
             rand_i = torch.randperm(self.total_frame_number).tolist()
 
@@ -417,14 +423,15 @@ class RAVE(nn.Module):
         img_batch, control_batch = self.process_image_batch(input_dict['image_pil_list'])
         init_latents_pre = self.encode_imgs(img_batch)
 
-        if self.shuffle_mode == 'semantic':
-            print("[Semantic Shuffle] Computing CLIP frame embeddings (runs on CPU)...")
+        if self.shuffle_mode in ('semantic', 'kmeans'):
+            label = 'Semantic' if self.shuffle_mode == 'semantic' else 'K-means'
+            print(f"[{label} Shuffle] Computing CLIP frame embeddings (runs on CPU)...")
             self.frame_embeddings = ssu.compute_frame_embeddings(
                 input_dict['image_pil_list'],
                 grid_size=self.grid_size,
                 device='cpu'
             )
-            print(f"[Semantic Shuffle] Embeddings computed: {self.frame_embeddings.shape}")
+            print(f"[{label} Shuffle] Embeddings computed: {self.frame_embeddings.shape}")
         else:
             self.frame_embeddings = None
 

@@ -155,6 +155,71 @@ def semantic_permutation(embeddings, grid_frame_number, total_frame_number):
 
 
 
+def kmeans_permutation(embeddings, grid_frame_number, total_frame_number):
+    """
+    Semantic Shuffle v2: K-means clustering based grouping.
+
+    Instead of greedy nearest-neighbour (which picks a random seed each step),
+    K-means finds globally optimal clusters so similar frames are always
+    grouped together consistently across denoising steps.
+
+    Args:
+        embeddings        : torch.Tensor [N, D], L2-normalised CLIP embeddings.
+        grid_frame_number : int, frames per grid (e.g. 9 for a 3x3 grid).
+        total_frame_number: int, total number of frames N.
+
+    Returns:
+        permutation : list of N int indices where frames in the same cluster
+                      appear in consecutive blocks of grid_frame_number.
+    """
+    try:
+        from sklearn.cluster import KMeans
+    except ImportError:
+        raise ImportError(
+            "scikit-learn is required for K-means shuffle.\n"
+            "Run: pip install scikit-learn"
+        )
+
+    if hasattr(embeddings, 'numpy'):
+        emb_np = embeddings.numpy().astype(np.float32)
+    else:
+        emb_np = np.array(embeddings, dtype=np.float32)
+
+    n_clusters = max(1, total_frame_number // grid_frame_number)
+
+    kmeans = KMeans(n_clusters=n_clusters, n_init=10, random_state=0)
+    labels = kmeans.fit_predict(emb_np)
+    centers = kmeans.cluster_centers_
+
+    permutation = []
+    for cluster_id in range(n_clusters):
+        # Frames belonging to this cluster
+        cluster_frames = np.where(labels == cluster_id)[0]
+
+        if len(cluster_frames) == 0:
+            continue
+
+        # Sort by distance to cluster center (closest = most representative first)
+        center = centers[cluster_id]
+        dists = np.linalg.norm(emb_np[cluster_frames] - center, axis=1)
+        sorted_frames = cluster_frames[np.argsort(dists)].tolist()
+
+        # Pad to grid_frame_number if cluster is smaller than a full grid
+        while len(sorted_frames) < grid_frame_number:
+            sorted_frames.append(sorted_frames[-1])
+
+        # Trim to exact grid size
+        sorted_frames = sorted_frames[:grid_frame_number]
+        permutation.extend(sorted_frames)
+
+    # Safety: pad to total_frame_number if needed
+    while len(permutation) < total_frame_number:
+        permutation.append(permutation[-1])
+    permutation = permutation[:total_frame_number]
+
+    return permutation
+
+
 def validate_permutation(permutation, total_frame_number):
     """
     Assert that a permutation is valid:
