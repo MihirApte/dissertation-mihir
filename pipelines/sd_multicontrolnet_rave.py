@@ -44,7 +44,10 @@ class RAVE_MultiControlNet(nn.Module):
         controlnet_2 = ControlNetModel.from_pretrained(hf_cn_path[1], torch_dtype=self.dtype).to(self.device, self.dtype)
         pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(hf_path, controlnet=[controlnet_1, controlnet_2], torch_dtype=self.dtype).to(self.device, self.dtype) 
         pipe.enable_model_cpu_offload()
-        pipe.enable_xformers_memory_efficient_attention()
+        try:
+            pipe.enable_xformers_memory_efficient_attention()
+        except ModuleNotFoundError:
+            pass  # xformers not installed; using standard attention
         return pipe
         
     @torch.no_grad()
@@ -440,6 +443,11 @@ class RAVE_MultiControlNet(nn.Module):
 
         # shuffle_mode: 'random' (original RAVE) or 'semantic' (our improvement)
         self.shuffle_mode = input_dict.get('shuffle_mode', 'random')
+
+        # FreeU: reweights UNet backbone/skip features for sharper, higher-quality output
+        if input_dict.get('use_freeu', False):
+            self.unet.enable_freeu(s1=0.9, s2=0.2, b1=1.2, b2=1.4)
+            print("[FreeU] Enabled (s1=0.9, s2=0.2, b1=1.2, b2=1.4)")
 
         self.guidance_scale = input_dict['guidance_scale']
 

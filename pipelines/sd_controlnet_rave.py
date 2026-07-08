@@ -403,6 +403,11 @@ class RAVE(nn.Module):
         self.is_shuffle = input_dict['is_shuffle']
         self.give_control_inversion = input_dict['give_control_inversion']
         self.shuffle_mode = input_dict.get('shuffle_mode', 'random')
+
+        # FreeU: reweights UNet backbone/skip features for sharper, higher-quality output
+        if input_dict.get('use_freeu', False):
+            self.unet.enable_freeu(s1=0.9, s2=0.2, b1=1.2, b2=1.4)
+            print("[FreeU] Enabled (s1=0.9, s2=0.2, b1=1.2, b2=1.4)")
         
         self.guidance_scale = input_dict['guidance_scale']
         
