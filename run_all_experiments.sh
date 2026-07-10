@@ -48,6 +48,8 @@ section() { echo -e "\n${CYAN}==================================================
 warn()    { echo -e "${YELLOW}[$(date '+%H:%M:%S')] WARNING: $1${NC}"; }
 fail()    { echo -e "${RED}[$(date '+%H:%M:%S')] ERROR: $1${NC}"; exit 1; }
 
+FAILED_EXPERIMENTS=()
+
 run_exp() {
     local config="$1"
     local label="$2"
@@ -57,8 +59,16 @@ run_exp() {
     fi
     log "Running: $label"
     local start=$SECONDS
-    python3 scripts/run_experiment.py "$config"
-    log "Done in $(( SECONDS - start ))s  (~$(( (SECONDS - start) / 60 )) min)"
+    # NOTE: this is deliberately NOT allowed to kill the whole script on failure
+    # (a single flaky experiment — e.g. a transient model-download hiccup —
+    # should not cost hours of remaining GPU time). Failures are collected and
+    # reported in the final summary instead.
+    if python3 scripts/run_experiment.py "$config"; then
+        log "Done in $(( SECONDS - start ))s  (~$(( (SECONDS - start) / 60 )) min)"
+    else
+        warn "FAILED: $label — continuing with the next experiment."
+        FAILED_EXPERIMENTS+=("$label")
+    fi
     echo ""
 }
 
@@ -135,6 +145,13 @@ python3 compute_metrics_all.py --device cpu
 #  DONE
 # ==============================================================
 section "All Done!"
+if [ ${#FAILED_EXPERIMENTS[@]} -gt 0 ]; then
+    warn "${#FAILED_EXPERIMENTS[@]} experiment(s) failed:"
+    for f in "${FAILED_EXPERIMENTS[@]}"; do
+        echo -e "  ${RED}- $f${NC}"
+    done
+    echo ""
+fi
 log "GIF results saved under:      results/"
 log "Full metrics table saved to:  results/metrics_all_methods.txt"
 log ""

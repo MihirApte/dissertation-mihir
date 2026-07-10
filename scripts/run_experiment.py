@@ -41,7 +41,10 @@ def init_paths(input_ns):
         input_ns.hf_cn_path = [const.PREPROCESSOR_DICT[i] for i in input_ns.preprocess_name.split('-')]
     else:
         input_ns.hf_cn_path = const.PREPROCESSOR_DICT[input_ns.preprocess_name]
-    input_ns.hf_path = "runwayml/stable-diffusion-v1-5"
+    # "runwayml/stable-diffusion-v1-5" was taken down from HF Hub; this is the
+    # community-maintained mirror at the same commit, used to avoid relying on
+    # HF's redirect behaviour.
+    input_ns.hf_path = "stable-diffusion-v1-5/stable-diffusion-v1-5"
     
     input_ns.inverse_path = f'{const.GENERATED_DATA_PATH}/inverses/{input_ns.video_name}/{input_ns.preprocess_name}_{input_ns.model_id}_{input_ns.grid_size}x{input_ns.grid_size}_{input_ns.pad}'
     input_ns.control_path = f'{const.GENERATED_DATA_PATH}/controls/{input_ns.video_name}/{input_ns.preprocess_name}_{input_ns.grid_size}x{input_ns.grid_size}_{input_ns.pad}'
