@@ -25,7 +25,12 @@ class ZoeDetector:
             load_file_from_url(remote_model_path, model_dir=self.model_dir)
         conf = get_config("zoedepth", "infer")
         model = ZoeDepth.build_from_config(conf)
-        model.load_state_dict(torch.load(modelpath, map_location=model.device)['model'])
+        # strict=False: newer timm versions changed how relative_position_index
+        # buffers are registered for the BEiT/Swin-style backbone, so the
+        # pretrained checkpoint (saved with an older timm) has keys the current
+        # model doesn't expect. This is a harmless architecture-bookkeeping
+        # mismatch, not missing weights - safe to ignore.
+        model.load_state_dict(torch.load(modelpath, map_location=model.device)['model'], strict=False)
         model.eval()
         self.model = model.to(self.device)
 
