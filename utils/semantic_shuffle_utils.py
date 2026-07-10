@@ -191,6 +191,18 @@ def kmeans_permutation(embeddings, grid_frame_number, total_frame_number):
     labels = kmeans.fit_predict(emb_np)
     centers = kmeans.cluster_centers_
 
+    # KMeans assigns every one of the `total_frame_number` embeddings to
+    # exactly one cluster, so concatenating the (sorted) per-cluster frame
+    # lists always yields every index 0..total_frame_number-1 exactly once -
+    # a valid permutation by construction.
+    #
+    # NOTE: an earlier version trimmed each cluster to exactly
+    # grid_frame_number frames (silently dropping the overflow from large
+    # clusters) and padded undersized clusters by duplicating their last
+    # frame. That made the result an INVALID permutation (some frame indices
+    # missing, others repeated), which crashed order_grids() downstream with
+    # "ValueError: np.int64(N) is not in list". Do not reintroduce trimming
+    # or duplicate-padding here.
     permutation = []
     for cluster_id in range(n_clusters):
         # Frames belonging to this cluster
@@ -203,19 +215,7 @@ def kmeans_permutation(embeddings, grid_frame_number, total_frame_number):
         center = centers[cluster_id]
         dists = np.linalg.norm(emb_np[cluster_frames] - center, axis=1)
         sorted_frames = cluster_frames[np.argsort(dists)].tolist()
-
-        # Pad to grid_frame_number if cluster is smaller than a full grid
-        while len(sorted_frames) < grid_frame_number:
-            sorted_frames.append(sorted_frames[-1])
-
-        # Trim to exact grid size
-        sorted_frames = sorted_frames[:grid_frame_number]
         permutation.extend(sorted_frames)
-
-    # Safety: pad to total_frame_number if needed
-    while len(permutation) < total_frame_number:
-        permutation.append(permutation[-1])
-    permutation = permutation[:total_frame_number]
 
     return permutation
 
