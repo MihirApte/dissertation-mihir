@@ -181,10 +181,20 @@ def pidinet_safe(img, res=512, **kwargs):
 
 
 
+# Cached across calls within a single experiment (one subprocess = one
+# cache). Without this, zoe_depth() rebuilt a fresh ZoeDetector - reloading
+# the full 1.34GB checkpoint and rebuilding the whole backbone - for EVERY
+# grid image (e.g. 33 times for a 33-grid video), which is what made
+# non-trivial videos take ~25 minutes just for depth preprocessing. Now the
+# model loads once per experiment and is reused for the remaining frames.
+_zoe_detector_cache = None
+
 def zoe_depth(img, res=512, **kwargs):
+    global _zoe_detector_cache
     img, remove_pad = resize_image_with_pad(img, res)
-    model_zoe_depth = ZoeDetector()
-    result = model_zoe_depth(img)
+    if _zoe_detector_cache is None:
+        _zoe_detector_cache = ZoeDetector()
+    result = _zoe_detector_cache(img)
     return remove_pad(result), True
 
 

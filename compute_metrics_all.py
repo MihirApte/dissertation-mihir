@@ -24,10 +24,11 @@ import cv2
 # Method definitions — folder keyword -> label
 # ---------------------------------------------------------------------------
 METHODS = [
-    ("baseline_random",    "Baseline (random, depth_zoe)"),
-    ("semantic_shuffle",   "Semantic v1 (greedy NN, depth_zoe)"),
-    ("kmeans_shuffle",     "Semantic v2 (K-means, depth_zoe)"),
-    ("multicontrol_random","Multi-ControlNet (random, depth+canny+FreeU)"),
+    ("baseline_random",       "Baseline (random, depth_zoe)"),
+    ("semantic_shuffle",      "Semantic v1 (greedy NN, depth_zoe)"),
+    ("kmeans_shuffle",        "Semantic v2 (K-means, depth_zoe)"),
+    ("multicontrol_random",   "Multi-ControlNet (random, depth+canny+FreeU)"),
+    ("semantic_multicontrol", "Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)"),
 ]
 
 VIDEO_PROMPTS = {
