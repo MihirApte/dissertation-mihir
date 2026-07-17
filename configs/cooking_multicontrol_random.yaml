@@ -1,0 +1,31 @@
+# EXPERIMENT - cooking (Multi-ControlNet (depth+canny) + FreeU)
+video_name: "cooking"
+preprocess_name: 'depth_zoe-canny'
+
+batch_size: 4
+batch_size_vae: 1
+cond_step_start: 0.0
+controlnet_conditioning_scale: '1.0-1.0'
+controlnet_guidance_end: 1.0
+controlnet_guidance_start: 0.0
+give_control_inversion: true
+
+grid_size: 3
+sample_size: 36
+pad: 1
+guidance_scale: 7.5
+inversion_prompt: ''
+
+is_ddim_inversion: true
+is_shuffle: true
+shuffle_mode: 'random'
+
+negative_prompts: ""
+num_inference_steps: 50
+num_inversion_step: 50
+positive_prompts: "A warm oil painting of someone cooking in a kitchen"
+save_folder: 'cooking_multicontrol_random'
+
+use_freeu: true
+seed: 0
+model_id: 'None'

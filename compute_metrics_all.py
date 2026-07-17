@@ -36,6 +36,24 @@ VIDEO_PROMPTS = {
     "shanghai": "A cinematic drone view of a futuristic cyberpunk city at night",
     "street":   "People walking on a vibrant neon-lit street, anime style",
     "dog":      "An oil painting of a dog running through a sunlit green meadow",
+
+    "airplane":      "A vintage sepia-toned photograph of an airplane taking off",
+    "baseball":      "A vibrant comic book illustration of a baseball game in action",
+    "bicycle":       "A watercolor painting of a bicycle riding through a city street",
+    "birds":         "A soft pastel illustration of birds flying across the sky",
+    "cat":           "A children's storybook illustration of a cat walking indoors",
+    "cooking":       "A warm oil painting of someone cooking in a kitchen",
+    "dancer":        "A dynamic charcoal sketch of a dancer performing",
+    "farmland":      "A golden-hour impressionist painting of farmland",
+    "fish":          "A vivid anime-style illustration of fish swimming underwater",
+    "flowers":       "A delicate watercolor painting of blooming flowers",
+    "forest":        "A moody, atmospheric fantasy illustration of a forest",
+    "highway":       "A neon-lit synthwave illustration of a highway at dusk",
+    "interview":     "A black-and-white film noir style portrait of a person talking",
+    "motorboat":     "A bright pop-art illustration of a motorboat on the ocean",
+    "racecars":      "A dynamic cyberpunk illustration of race cars on a track",
+    "skateboarding": "A graffiti street-art style illustration of skateboarding",
+    "waterglass":    "A hyperrealistic macro painting of water in a glass",
 }
 
 
