@@ -104,7 +104,9 @@ def discover_configs():
 
 
 def already_done(save_folder):
-    return len(glob.glob(f"results/*/{save_folder}/*/*.gif")) > 0
+    # actual layout is results/{date}/{save_folder}/{video_name}/{prompt-index}/*.gif
+    # - one more directory level (video_name) than this used to check for.
+    return len(glob.glob(f"results/*/{save_folder}/*/*/*.gif")) > 0
 
 
 def video_missing(cfg):
