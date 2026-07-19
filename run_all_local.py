@@ -161,7 +161,10 @@ def run_config(config_path, label, idx, total):
 
     print(f"\n{'='*70}\n{tag} [RUN] {config_path}  ({label})\n{'='*70}", flush=True)
     t0 = time.time()
-    ret = stream_run(["python3", "scripts/run_experiment.py", config_path])
+    # use the exact same interpreter running this script (sys.executable),
+    # not a hardcoded "python3" - on Windows/conda that name can resolve to
+    # a different Python install with no packages installed at all.
+    ret = stream_run([sys.executable, "scripts/run_experiment.py", config_path])
     mins = (time.time() - t0) / 60
     if ret == 0:
         print(f"{tag} [OK] finished in {mins:.1f} min", flush=True)
