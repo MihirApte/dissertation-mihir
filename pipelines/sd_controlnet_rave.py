@@ -33,7 +33,10 @@ class RAVE(nn.Module):
         super().__init__()
 
         self.device = device
-        self.dtype = torch.float
+        # float16 instead of float32 - roughly halves GPU memory use for the
+        # loaded models, needed to fit SD1.5 + ControlNet on 8GB-class cards
+        # (RTX 2080 etc.) without running out of memory during VAE encoding.
+        self.dtype = torch.float16
 
     @torch.no_grad()
     def __init_pipe(self, hf_cn_path, hf_path):
@@ -222,7 +225,7 @@ class RAVE(nn.Module):
         latents_l = []
         splits = img_torch.split(self.batch_size_vae, dim=0)
         for split in splits:
-            image = 2 * split - 1
+            image = (2 * split - 1).to(self.dtype)
             posterior = self.vae.encode(image).latent_dist
             latents = posterior.mean * self.vae.config.scaling_factor
             latents_l.append(latents)

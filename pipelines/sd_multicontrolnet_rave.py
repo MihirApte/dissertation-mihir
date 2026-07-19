@@ -36,7 +36,9 @@ class RAVE_MultiControlNet(nn.Module):
         super().__init__()
 
         self.device = device
-        self.dtype = torch.float
+        # float16 instead of float32 - roughly halves GPU memory use, needed
+        # to fit two ControlNets + SD1.5 on 8GB-class cards without OOM.
+        self.dtype = torch.float16
 
     @torch.no_grad()
     def __init_pipe(self, hf_cn_path, hf_path):
@@ -256,7 +258,7 @@ class RAVE_MultiControlNet(nn.Module):
         latents_l = []
         splits = img_torch.split(self.batch_size_vae, dim=0)
         for split in splits:
-            image = 2 * split - 1
+            image = (2 * split - 1).to(self.dtype)
             posterior = self.vae.encode(image).latent_dist
             latents = posterior.mean * self.vae.config.scaling_factor
             latents_l.append(latents)
