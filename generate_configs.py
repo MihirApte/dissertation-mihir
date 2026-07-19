@@ -81,7 +81,7 @@ TEMPLATE = """# EXPERIMENT - {video} ({comment})
 video_name: "{video}"
 preprocess_name: '{preprocess_name}'
 
-batch_size: 1
+batch_size: 4
 batch_size_vae: 1
 cond_step_start: 0.0
 controlnet_conditioning_scale: {cn_scale}
