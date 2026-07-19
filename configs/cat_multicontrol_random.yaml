@@ -2,7 +2,7 @@
 video_name: "cat"
 preprocess_name: 'depth_zoe-canny'
 
-batch_size: 4
+batch_size: 1
 batch_size_vae: 1
 cond_step_start: 0.0
 controlnet_conditioning_scale: '1.0-1.0'

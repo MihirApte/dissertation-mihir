@@ -48,10 +48,13 @@ class RAVE(nn.Module):
             pipe.enable_xformers_memory_efficient_attention()
         except ModuleNotFoundError:
             pass  # xformers not installed; using standard attention (fine for T4/testing)
-        # attention/VAE slicing trade a bit of speed for a real memory cut -
-        # needed on 8GB-class cards (RTX 2080) for longer videos where the
-        # UNet/VAE forward batch is large (grid_size^2 * many frames).
-        pipe.enable_attention_slicing()
+        # VAE slicing (encode/decode in smaller chunks) is a safe memory win
+        # with no attention-processor downside. NOT using enable_attention_slicing():
+        # it replaces diffusers' efficient default SDPA attention processor with
+        # an older processor that still materializes a full attention matrix per
+        # slice - for RAVE's co-grouped cross-frame self-attention (long sequence
+        # length from batching many frames together) that's *worse*, not better.
+        # The real lever for memory here is the `batch_size` config value.
         pipe.enable_vae_slicing()
         return pipe
         
