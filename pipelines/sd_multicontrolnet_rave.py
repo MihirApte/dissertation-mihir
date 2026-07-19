@@ -306,7 +306,7 @@ class RAVE_MultiControlNet(nn.Module):
         els = os.listdir(self.inverse_path) 
         els = [el for el in els if el.endswith('.pt')]
         for k,inv_path in enumerate(sorted(els, key=lambda x: int(x.split('.')[0]))):
-            latents[k] = torch.load(os.path.join(self.inverse_path, inv_path)).to(device=self.device)
+            latents[k] = torch.load(os.path.join(self.inverse_path, inv_path)).to(device=self.device, dtype=self.dtype)
 
         self.inverse_scheduler = DDIMScheduler.from_config(self.scheduler_config)
         self.inverse_scheduler.set_timesteps(self.num_inversion_step, device=self.device)
@@ -354,9 +354,12 @@ class RAVE_MultiControlNet(nn.Module):
 
     def process_image_batch(self, image_pil_list):
         if len(os.listdir(self.controls_path)) > 0:
-            control_torch_1 = torch.load(os.path.join(self.controls_path, 'control_1.pt')).to(self.device)
-            control_torch_2 = torch.load(os.path.join(self.controls_path, 'control_2.pt')).to(self.device)
-            img_torch = torch.load(os.path.join(self.controls_path, 'img.pt')).to(self.device)
+            # cached tensors may have been saved by an earlier run under a
+            # different dtype (e.g. float32 before the fp16 switch) - always
+            # re-cast to the pipeline's current dtype after loading.
+            control_torch_1 = torch.load(os.path.join(self.controls_path, 'control_1.pt')).to(self.device, self.dtype)
+            control_torch_2 = torch.load(os.path.join(self.controls_path, 'control_2.pt')).to(self.device, self.dtype)
+            img_torch = torch.load(os.path.join(self.controls_path, 'img.pt')).to(self.device, self.dtype)
         else:
             image_torch_list = []
             control_torch_list_1, control_torch_list_2 = [], []
