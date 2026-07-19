@@ -48,6 +48,11 @@ class RAVE(nn.Module):
             pipe.enable_xformers_memory_efficient_attention()
         except ModuleNotFoundError:
             pass  # xformers not installed; using standard attention (fine for T4/testing)
+        # attention/VAE slicing trade a bit of speed for a real memory cut -
+        # needed on 8GB-class cards (RTX 2080) for longer videos where the
+        # UNet/VAE forward batch is large (grid_size^2 * many frames).
+        pipe.enable_attention_slicing()
+        pipe.enable_vae_slicing()
         return pipe
         
     @torch.no_grad()

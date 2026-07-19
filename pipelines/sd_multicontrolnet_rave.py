@@ -50,6 +50,12 @@ class RAVE_MultiControlNet(nn.Module):
             pipe.enable_xformers_memory_efficient_attention()
         except ModuleNotFoundError:
             pass  # xformers not installed; using standard attention
+        # attention/VAE slicing trade a bit of speed for a real memory cut -
+        # needed on 8GB-class cards (RTX 2080) for longer videos where the
+        # UNet/VAE forward batch is large (grid_size^2 * many frames), and
+        # doubly so here since two ControlNets are loaded at once.
+        pipe.enable_attention_slicing()
+        pipe.enable_vae_slicing()
         return pipe
         
     @torch.no_grad()
