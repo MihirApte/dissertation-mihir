@@ -1,0 +1,130 @@
+RAVE Dissertation — All Methods Comparison
+
+Video      Method                                           Warp     CLIP
+--------------------------------------------------------------------------
+truck      Baseline (random, depth_zoe)                   0.1141   0.3360
+truck      Semantic v1 (greedy NN, depth_zoe)             0.1127   0.3373
+truck      Semantic v2 (K-means, depth_zoe)               0.1211   0.3401
+truck      Multi-ControlNet (random, depth+canny+FreeU)   0.1160   0.3265
+truck      Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+shanghai   Baseline (random, depth_zoe)                   0.0168   0.2913
+shanghai   Semantic v1 (greedy NN, depth_zoe)             0.0185   0.2919
+shanghai   Semantic v2 (K-means, depth_zoe)               0.0179   0.2908
+shanghai   Multi-ControlNet (random, depth+canny+FreeU)   0.0269   0.2832
+shanghai   Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)   0.0287   0.2841
+
+street     Baseline (random, depth_zoe)                   0.0492   0.2987
+street     Semantic v1 (greedy NN, depth_zoe)             0.0507   0.2994
+street     Semantic v2 (K-means, depth_zoe)               0.0508   0.2994
+street     Multi-ControlNet (random, depth+canny+FreeU)   0.0548   0.2737
+street     Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+dog        Baseline (random, depth_zoe)                   0.0529   0.3287
+dog        Semantic v1 (greedy NN, depth_zoe)             0.0529   0.3287
+dog        Semantic v2 (K-means, depth_zoe)               0.0533   0.3289
+dog        Multi-ControlNet (random, depth+canny+FreeU)   0.0507   0.3120
+dog        Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)   0.0534   0.3106
+
+airplane   Baseline (random, depth_zoe)                   0.0221   0.3406
+airplane   Semantic v1 (greedy NN, depth_zoe)             0.0207   0.3409
+airplane   Semantic v2 (K-means, depth_zoe)               0.0218   0.3406
+airplane   Multi-ControlNet (random, depth+canny+FreeU)   0.0286   0.3437
+airplane   Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+baseball   Baseline (random, depth_zoe)                   0.0568   0.3271
+baseball   Semantic v1 (greedy NN, depth_zoe)             0.0570   0.3273
+baseball   Semantic v2 (K-means, depth_zoe)               0.0588   0.3280
+baseball   Multi-ControlNet (random, depth+canny+FreeU)   0.0500   0.2575
+baseball   Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+bicycle    Baseline (random, depth_zoe)                   0.0501   0.3150
+bicycle    Semantic v1 (greedy NN, depth_zoe)             0.0506   0.3140
+bicycle    Semantic v2 (K-means, depth_zoe)               0.0508   0.3128
+bicycle    Multi-ControlNet (random, depth+canny+FreeU)   0.0318   0.2440
+bicycle    Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+birds      Baseline (random, depth_zoe)                   0.0327   0.3518
+birds      Semantic v1 (greedy NN, depth_zoe)             0.0333   0.3519
+birds      Semantic v2 (K-means, depth_zoe)               0.0317   0.3515
+birds      Multi-ControlNet (random, depth+canny+FreeU)   0.0361   0.3191
+birds      Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+cat        Baseline (random, depth_zoe)                   0.0241   0.2648
+cat        Semantic v1 (greedy NN, depth_zoe)             0.0223   0.2652
+cat        Semantic v2 (K-means, depth_zoe)               0.0236   0.2655
+cat        Multi-ControlNet (random, depth+canny+FreeU)   0.0353   0.2622
+cat        Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+cooking    Baseline (random, depth_zoe)                   0.0288   0.2535
+cooking    Semantic v1 (greedy NN, depth_zoe)             0.0353   0.2539
+cooking    Semantic v2 (K-means, depth_zoe)               0.0321   0.2548
+cooking    Multi-ControlNet (random, depth+canny+FreeU)   0.0318   0.2848
+cooking    Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+dancer     Baseline (random, depth_zoe)                   0.0130   0.1994
+dancer     Semantic v1 (greedy NN, depth_zoe)             0.0127   0.1998
+dancer     Semantic v2 (K-means, depth_zoe)               0.0126   0.1994
+dancer     Multi-ControlNet (random, depth+canny+FreeU)   0.0150   0.2123
+dancer     Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+farmland   Baseline (random, depth_zoe)                   0.0181   0.2980
+farmland   Semantic v1 (greedy NN, depth_zoe)             0.0184   0.2983
+farmland   Semantic v2 (K-means, depth_zoe)               0.0183   0.2982
+farmland   Multi-ControlNet (random, depth+canny+FreeU)   0.0125   0.3110
+farmland   Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+fish       Baseline (random, depth_zoe)                   0.0373   0.3101
+fish       Semantic v1 (greedy NN, depth_zoe)             0.0405   0.3095
+fish       Semantic v2 (K-means, depth_zoe)               0.0396   0.3103
+fish       Multi-ControlNet (random, depth+canny+FreeU)   0.0419   0.3058
+fish       Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+flowers    Baseline (random, depth_zoe)                   0.0415   0.2538
+flowers    Semantic v1 (greedy NN, depth_zoe)             0.0421   0.2536
+flowers    Semantic v2 (K-means, depth_zoe)               0.0428   0.2534
+flowers    Multi-ControlNet (random, depth+canny+FreeU)   0.0521   0.3208
+flowers    Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+forest     Baseline (random, depth_zoe)                   0.0141   0.2836
+forest     Semantic v1 (greedy NN, depth_zoe)             0.0138   0.2823
+forest     Semantic v2 (K-means, depth_zoe)               0.0136   0.2825
+forest     Multi-ControlNet (random, depth+canny+FreeU)   0.0336   0.2097
+forest     Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+highway    Baseline (random, depth_zoe)                   0.0316   0.3263
+highway    Semantic v1 (greedy NN, depth_zoe)             0.0354   0.3282
+highway    Semantic v2 (K-means, depth_zoe)               0.0350   0.3287
+highway    Multi-ControlNet (random, depth+canny+FreeU)   0.0349   0.3158
+highway    Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+interview  Baseline (random, depth_zoe)                   0.0059   0.2253
+interview  Semantic v1 (greedy NN, depth_zoe)             0.0062   0.2256
+interview  Semantic v2 (K-means, depth_zoe)               0.0063   0.2256
+interview  Multi-ControlNet (random, depth+canny+FreeU)   0.0077   0.2442
+interview  Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+motorboat  Baseline (random, depth_zoe)                   0.0386   0.3247
+motorboat  Semantic v1 (greedy NN, depth_zoe)             0.0389   0.3232
+motorboat  Semantic v2 (K-means, depth_zoe)               0.0401   0.3243
+motorboat  Multi-ControlNet (random, depth+canny+FreeU)   0.0252   0.2614
+motorboat  Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+racecars   Baseline (random, depth_zoe)                   0.0618   0.2842
+racecars   Semantic v1 (greedy NN, depth_zoe)             0.0634   0.2875
+racecars   Semantic v2 (K-means, depth_zoe)               0.0634   0.2848
+racecars   Multi-ControlNet (random, depth+canny+FreeU)   0.0648   0.2550
+racecars   Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+skateboarding Baseline (random, depth_zoe)                   0.0362   0.2953
+skateboarding Semantic v1 (greedy NN, depth_zoe)             0.0372   0.2951
+skateboarding Semantic v2 (K-means, depth_zoe)               0.0368   0.2960
+skateboarding Multi-ControlNet (random, depth+canny+FreeU)   0.0468   0.2721
+skateboarding Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
+waterglass Baseline (random, depth_zoe)                   0.0235   0.3277
+waterglass Semantic v1 (greedy NN, depth_zoe)             0.0235   0.3276
+waterglass Semantic v2 (K-means, depth_zoe)               0.0235   0.3277
+waterglass Multi-ControlNet (random, depth+canny+FreeU)   0.0172   0.3397
+waterglass Hybrid: Semantic + Multi-ControlNet (depth+canny+FreeU)      N/A      N/A
+
