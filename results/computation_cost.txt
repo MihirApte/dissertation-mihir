@@ -1,0 +1,29 @@
+RAVE Dissertation -- Computational Cost Comparison
+
+Video           Method                                          Wall(s)  PeakGPU(MB)  Frames
+--------------------------------------------------------------------------------------------
+flowers         Baseline (random, depth_zoe)                    1741.60      11150.0      33
+flowers         Semantic v1 (greedy NN, depth_zoe)              1674.30      11150.0      33
+flowers         Semantic v2 (K-means, depth_zoe)                1788.86      11150.0      33
+flowers         Multi-ControlNet (random, depth+canny+FreeU)    2249.97      12391.4      33
+
+motorboat       Baseline (random, depth_zoe)                    1461.80      10874.5      28
+motorboat       Semantic v1 (greedy NN, depth_zoe)              1467.35      10874.5      28
+motorboat       Semantic v2 (K-means, depth_zoe)                1478.84      10874.5      28
+motorboat       Multi-ControlNet (random, depth+canny+FreeU)    1840.18      12047.9      28
+
+skateboarding   Baseline (random, depth_zoe)                    1328.01      10767.1      26
+skateboarding   Semantic v1 (greedy NN, depth_zoe)              1328.50      10767.1      26
+skateboarding   Semantic v2 (K-means, depth_zoe)                1333.81      10767.1      26
+skateboarding   Multi-ControlNet (random, depth+canny+FreeU)    1805.88      11910.4      26
+
+farmland        Baseline (random, depth_zoe)                    2040.91      11150.0      33
+farmland        Semantic v1 (greedy NN, depth_zoe)              1735.23      11150.0      33
+farmland        Semantic v2 (K-means, depth_zoe)                1670.08      11150.0      33
+farmland        Multi-ControlNet (random, depth+canny+FreeU)    2161.76      12391.4      33
+
+waterglass      Baseline (random, depth_zoe)                    1654.47      11150.0      33
+waterglass      Semantic v1 (greedy NN, depth_zoe)              1653.18      11150.0      33
+waterglass      Semantic v2 (K-means, depth_zoe)                1663.77      11150.0      33
+waterglass      Multi-ControlNet (random, depth+canny+FreeU)    2146.98      12391.4      33
+
