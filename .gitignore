@@ -161,6 +161,20 @@ results/*
 *.safetensors
 
 assets/notebook-generated/*
+
+# Not part of the final dissertation pipeline / low-weight scratch files
+README_PROFESSOR.md
+colab_run.ipynb
+run_all_experiments.sh
+demo_notebook.ipynb
+patch_basicsr.py
+patch_encode_dtype.py
+generate_configs.py
+fix_zip.py
+compute_metrics.py
+results/
+results_clean/
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
